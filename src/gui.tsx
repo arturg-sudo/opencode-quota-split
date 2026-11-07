@@ -70,11 +70,39 @@ function percentOf(u: Usage | undefined, id: "h5" | "d7" | "d30"): number {
   return acc ? clamp(acc.percent) : 0
 }
 
-function Ring(props: { value: number; onClick: () => void }) {
-  const radius = 6.3
+function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?: number; color?: string }) {
+  const viewBox = 14
+  const stroke = props.strokeWidth ?? 1.5
+  const size = props.size ?? viewBox
+  const center = viewBox / 2
+  const radius = center - stroke / 2
   const circumference = 2 * Math.PI * radius
-  const value = clamp(props.value)
-  const dash = Math.max(circumference * 0.015, (value / 100) * circumference)
+  const offset = circumference * (1 - clamp(props.percentage) / 100)
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${viewBox} ${viewBox}`} fill="none" style={{ display: "block", transform: "rotate(-90deg)" }}>
+      <circle
+        cx={center}
+        cy={center}
+        r={radius}
+        stroke="var(--v2-background-bg-layer-04)"
+        stroke-width={stroke}
+      />
+      <circle
+        cx={center}
+        cy={center}
+        r={radius}
+        stroke={props.color ?? "var(--v2-icon-icon-base)"}
+        stroke-width={stroke}
+        stroke-dasharray={circumference.toString()}
+        stroke-dashoffset={offset.toString()}
+        style={{ transition: "stroke-dashoffset 0.35s cubic-bezier(0.65, 0, 0.35, 1)" }}
+      />
+    </svg>
+  )
+}
+
+function Ring(props: { value: number; onClick: () => void }) {
+  const accent = ACCENT === "white" ? "var(--v2-icon-icon-base)" : accentColor()
   return (
     <div
       role="button"
@@ -94,28 +122,7 @@ function Ring(props: { value: number; onClick: () => void }) {
         opacity: "0.9",
       }}
     >
-      <svg width="16" height="16" viewBox="0 0 16 16" style={{ overflow: "visible" }}>
-        <circle
-          cx="8"
-          cy="8"
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          stroke-opacity="0.18"
-          stroke-width="1.5"
-        />
-        <circle
-          cx="8"
-          cy="8"
-          r={radius}
-          fill="none"
-          stroke={tint(value)}
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-dasharray={`${dash} ${circumference}`}
-          transform="rotate(-90 8 8)"
-        />
-      </svg>
+      <ProgressCircle percentage={clamp(props.value)} size={16} color={accent} />
     </div>
   )
 }
