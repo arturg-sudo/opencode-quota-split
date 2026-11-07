@@ -70,16 +70,29 @@ function percentOf(u: Usage | undefined, id: "h5" | "d7" | "d30"): number {
   return acc ? clamp(acc.percent) : 0
 }
 
-function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?: number; color?: string }) {
-  const viewBox = 14
-  const stroke = props.strokeWidth ?? 1.5
+function ProgressCircle(props: {
+  percentage: number
+  appearance?: "compact" | "indicator"
+  size?: number
+  strokeWidth?: number
+  color?: string
+}) {
+  const appearance = props.appearance ?? "compact"
+  const viewBox = appearance === "indicator" ? 16 : 14
   const size = props.size ?? viewBox
+  const stroke = props.strokeWidth ?? (appearance === "indicator" ? 3 : 1.5)
   const center = viewBox / 2
   const radius = center - stroke / 2
   const circumference = 2 * Math.PI * radius
   const offset = circumference * (1 - clamp(props.percentage) / 100)
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${viewBox} ${viewBox}`} fill="none" style={{ display: "block", transform: "rotate(-90deg)" }}>
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${viewBox} ${viewBox}`}
+      fill="none"
+      style={{ display: "block", transform: "rotate(-90deg)" }}
+    >
       <circle
         cx={center}
         cy={center}
@@ -87,6 +100,15 @@ function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?
         stroke="var(--v2-background-bg-layer-04)"
         stroke-width={stroke}
       />
+      {appearance === "indicator" ? (
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          stroke="var(--v2-overlay-simple-overlay-pressed, transparent)"
+          stroke-width={stroke}
+        />
+      ) : null}
       <circle
         cx={center}
         cy={center}
@@ -122,7 +144,7 @@ function Ring(props: { value: number; onClick: () => void }) {
         opacity: "0.9",
       }}
     >
-      <ProgressCircle percentage={clamp(props.value)} size={16} color={accent} />
+      <ProgressCircle appearance="indicator" percentage={clamp(props.value)} size={16} color={accent} />
     </div>
   )
 }
