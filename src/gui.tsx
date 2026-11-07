@@ -269,13 +269,9 @@ export default Plugin.define({
     })
 
     ctx.add(Slot, {
-      at: "window.bottom",
-      order: 20,
-      render: () => (
-        <div style={{ display: "flex", "justify-content": "flex-end", padding: "2px 10px" }}>
-          <Ring value={percentOf(data(), "h5")} onClick={toggle} />
-        </div>
-      ),
+      at: "session.header",
+      order: 5,
+      render: () => <Ring value={percentOf(data(), "h5")} onClick={toggle} />,
     })
 
     ctx.add(Command, {
