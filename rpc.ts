@@ -20,6 +20,15 @@ const accountWin = {
   additionalProperties: false,
 } as const
 
+const sessionShape = {
+  type: "object",
+  properties: {
+    spent: { type: "number" },
+  },
+  required: ["spent"],
+  additionalProperties: false,
+} as const
+
 const snapshot = {
   type: "object",
   properties: {
@@ -44,6 +53,7 @@ const snapshot = {
       required: ["h5", "d7", "d30"],
       additionalProperties: false,
     },
+    session: sessionShape,
   },
   required: ["provider", "windows"],
   additionalProperties: false,
@@ -53,7 +63,11 @@ export const QuotaSplitRpc = Rpc.define({
   id: "quota-split",
   methods: {
     usage: {
-      input: { type: "object", properties: {}, additionalProperties: false },
+      input: {
+        type: "object",
+        properties: { sessionID: { type: "string" } },
+        additionalProperties: false,
+      },
       output: snapshot,
     },
     setLimits: {

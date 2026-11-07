@@ -9,6 +9,7 @@ type Usage = {
   provider: string
   windows: { h5: Win; d7: Win; d30: Win }
   account?: { h5: AccountWin; d7: AccountWin; d30: AccountWin }
+  session?: { spent: number }
 }
 
 const ROWS: Array<{ id: "h5" | "d7" | "d30"; label: string }> = [
@@ -239,6 +240,23 @@ function QuotaView(props: { data: () => Usage | undefined; error: () => string |
           ) : null}
         </div>
       ) : null}
+      {props.data()?.session ? (
+        <div
+          style={{
+            display: "flex",
+            "justify-content": "space-between",
+            gap: "8px",
+            "border-top": "1px solid color-mix(in srgb, currentColor 8%, transparent)",
+            "padding-top": "10px",
+            "font-size": "11px",
+          }}
+        >
+          <span style={{ opacity: "0.55" }}>Сессия</span>
+          <span style={{ "font-variant-numeric": "tabular-nums", "font-weight": "500" }}>
+            ${props.data()!.session!.spent.toFixed(4)}
+          </span>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -258,7 +276,8 @@ export default Plugin.define({
 
     const load = async () => {
       try {
-        const result = (await ctx.client.rpc(QuotaSplitRpc).usage({})) as Usage
+        const sessionID = ctx.sessions.current()?.id
+        const result = (await ctx.client.rpc(QuotaSplitRpc).usage(sessionID ? { sessionID } : {})) as Usage
         if (stopped) return
         setData(result)
         setError(undefined)

@@ -101,10 +101,16 @@ export default Plugin.define({
       return round(total)
     }
 
-    const snapshot = () => {
+    const snapshot = (sessionID?: string) => {
       const out: Record<string, { spent: number; limit: number }> = {}
       for (const w of WINDOWS) out[w.id] = { spent: sum(w.id, w.ms), limit: limits[w.id] }
-      return { provider, windows: out, ...(account ? { account } : {}) }
+      const spent = sessionID ? round(entries.filter((e) => e.sid === sessionID).reduce((a, e) => a + e.d, 0)) : undefined
+      return {
+        provider,
+        windows: out,
+        ...(account ? { account } : {}),
+        ...(spent !== undefined ? { session: { spent } } : {}),
+      }
     }
 
     const mergeEntries = (a: Entry[], b: Entry[]): Entry[] => {
@@ -409,11 +415,11 @@ export default Plugin.define({
       }
     })
 
-    const rpcReg = await ctx.rpc.register(QuotaSplitRpc, {      usage: async () => {
+    const rpcReg = await ctx.rpc.register(QuotaSplitRpc, {      usage: async (input: any) => {
         await ensure()
         await hydrate()
         prune()
-        return snapshot()
+        return snapshot(input?.sessionID)
       },
       setLimits: async (input: any) => {
         for (const w of WINDOWS) {
