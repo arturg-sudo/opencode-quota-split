@@ -71,6 +71,10 @@ function percentOf(u: Usage | undefined, id: "h5" | "d7" | "d30"): number {
 }
 
 function Ring(props: { value: number; onClick: () => void }) {
+  const radius = 6.3
+  const circumference = 2 * Math.PI * radius
+  const value = clamp(props.value)
+  const dash = Math.max(circumference * 0.015, (value / 100) * circumference)
   return (
     <div
       role="button"
@@ -81,7 +85,6 @@ function Ring(props: { value: number; onClick: () => void }) {
       }}
       title="Go limits — open or close the panel"
       style={{
-        position: "relative",
         width: "16px",
         height: "16px",
         display: "grid",
@@ -91,16 +94,28 @@ function Ring(props: { value: number; onClick: () => void }) {
         opacity: "0.9",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: "0",
-          "border-radius": "50%",
-          background: `conic-gradient(${tint(props.value)} ${props.value * 3.6}deg, color-mix(in srgb, currentColor 18%, transparent) 0)`,
-          mask: "radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0)",
-          "-webkit-mask": "radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0)",
-        }}
-      />
+      <svg width="16" height="16" viewBox="0 0 16 16" style={{ overflow: "visible" }}>
+        <circle
+          cx="8"
+          cy="8"
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          stroke-opacity="0.18"
+          stroke-width="1.5"
+        />
+        <circle
+          cx="8"
+          cy="8"
+          r={radius}
+          fill="none"
+          stroke={tint(value)}
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-dasharray={`${dash} ${circumference}`}
+          transform="rotate(-90 8 8)"
+        />
+      </svg>
     </div>
   )
 }
