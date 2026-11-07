@@ -287,7 +287,7 @@ export default Plugin.define({
       order: 5,
       render: () => {
         const used = percentOf(data(), "h5")
-        return <Ring value={100 - used} used={used} onClick={toggle} />
+        return <Ring value={used} used={used} onClick={toggle} />
       },
     })
 
