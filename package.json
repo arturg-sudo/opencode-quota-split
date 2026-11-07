@@ -1,23 +1,13 @@
 {
-  "name": "quota-split",
+  "name": "opencode-quota-split",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
-  "description": "OpenCode 2 plugin: local 5h/7d/30d OpenCode Go split guard",
+  "description": "OpenCode 2 plugin: local 5h/7d/30d split guard for OpenCode Go",
   "exports": {
     ".": "./index.ts",
     "./tui": "./tui.tsx",
     "./rpc": "./rpc.ts",
     "./gui-experimental": "./dist/gui-experimental.cjs"
   },
-  "files": ["index.ts", "tui.tsx", "rpc.ts", "README.md", "dist"],
-  "scripts": {
-    "build": "vite build"
-  },
-  "devDependencies": {
-    "@opencode/plugin": "2.2.5",
-    "solid-js": "^1.9.9",
-    "vite": "^7.1.14",
-    "vite-plugin-solid": "^2.11.9"
-  }
+  "files": ["index.ts", "tui.tsx", "rpc.ts", "README.md", "dist", "src"]
 }
