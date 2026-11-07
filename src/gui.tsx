@@ -77,7 +77,7 @@ function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?
   const center = viewBox / 2
   const radius = center - stroke / 2
   const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - clamp(props.percentage) / 100)
+  const offset = () => circumference * (1 - clamp(props.percentage) / 100)
   return (
     <svg width={size} height={size} viewBox={`0 0 ${viewBox} ${viewBox}`} fill="none" style={{ display: "block", transform: "rotate(-90deg)" }}>
       <circle
@@ -94,7 +94,7 @@ function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?
         stroke={props.color ?? "var(--v2-icon-icon-base)"}
         stroke-width={stroke}
         stroke-dasharray={circumference.toString()}
-        stroke-dashoffset={offset.toString()}
+        stroke-dashoffset={offset().toString()}
         style={{ transition: "stroke-dashoffset 0.35s cubic-bezier(0.65, 0, 0.35, 1)" }}
       />
     </svg>
