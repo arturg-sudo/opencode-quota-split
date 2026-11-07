@@ -101,8 +101,15 @@ function ProgressCircle(props: { percentage: number; size?: number; strokeWidth?
   )
 }
 
-function Ring(props: { value: number; onClick: () => void }) {
-  const accent = ACCENT === "white" ? "var(--v2-icon-icon-base)" : accentColor()
+function Ring(props: { value: number; used: number; onClick: () => void }) {
+  const accent =
+    props.used >= 100
+      ? RED
+      : props.used >= 80
+        ? AMBER
+        : ACCENT === "white"
+          ? "var(--v2-icon-icon-base)"
+          : accentColor()
   return (
     <div
       role="button"
@@ -111,7 +118,7 @@ function Ring(props: { value: number; onClick: () => void }) {
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") props.onClick()
       }}
-      title="Go limits — open or close the panel"
+      title={`Go: ${props.used.toFixed(0)}% used`}
       style={{
         width: "16px",
         height: "16px",
@@ -278,7 +285,10 @@ export default Plugin.define({
     ctx.add(Slot, {
       at: "session.header",
       order: 5,
-      render: () => <Ring value={percentOf(data(), "h5")} onClick={toggle} />,
+      render: () => {
+        const used = percentOf(data(), "h5")
+        return <Ring value={100 - used} used={used} onClick={toggle} />
+      },
     })
 
     ctx.add(Command, {
